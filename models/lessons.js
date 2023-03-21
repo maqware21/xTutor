@@ -7,7 +7,7 @@ function validateLesson(lesson) {
     subject: Joi.string().required(),
     topic: Joi.string().required(),
     quiz_type: Joi.string().required(),
-    publish: Joi.string().required(),
+    publish: Joi.boolean().required(),
     description: Joi.string().required(),
     lo1: Joi.string().required(),
     lo2: Joi.string().required(),
