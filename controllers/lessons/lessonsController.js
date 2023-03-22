@@ -1,6 +1,6 @@
 const { supabase } = require('../../config/supa');
+const HandleResponse = require('../../models/lessons/handleResponseLessons');
 const { validateLesson } = require('../../validations/lessonValidate');
-const express = require('express');
 
 /***************************** Get All Lessons ******************************/
 const getAllLessons = async (req, resp) => {
@@ -23,25 +23,6 @@ const createLesson = async (req, resp) => {
   const { error } = validateLesson(req.body);
   if (error) return resp.status(400).send({ error: error?.details[0].message });
 
-  const {
-    title,
-    educational_level,
-    subject,
-    topic,
-    quiz_type,
-    publish,
-    description,
-    lo1,
-    lo2,
-    lo3,
-    lo1_media,
-    lo2_media,
-    lo3_media,
-    lo1_description,
-    lo2_description,
-    lo3_description,
-  } = req.body;
-
   const authHeader = req.headers.authorization;
   const token = authHeader?.split(' ')[1];
   if (token === undefined) {
@@ -61,24 +42,7 @@ const createLesson = async (req, resp) => {
             if (data && statusText === 'OK') {
               await supabase
                 .from('lessons')
-                .insert({
-                  title: title,
-                  educational_level: educational_level,
-                  subject: subject,
-                  topic: topic,
-                  quiz_type: quiz_type,
-                  publish: publish,
-                  description: description,
-                  lo1: lo1,
-                  lo2: lo2,
-                  lo3: lo3,
-                  lo1_media: lo1_media,
-                  lo2_media: lo2_media,
-                  lo3_media: lo3_media,
-                  lo1_description: lo1_description,
-                  lo2_description: lo2_description,
-                  lo3_description: lo3_description,
-                })
+                .insert(HandleResponse.insertLesson(req.body))
                 .then(async (response) => {
                   const { data, error, statusText } = response;
                   if (data === null && statusText === null) {
@@ -117,43 +81,9 @@ const updateLesson = async (req, resp) => {
           .then(async (res) => {
             const { data, error, statusText } = res;
             if (data && statusText === 'OK') {
-              const {
-                title,
-                educational_level,
-                subject,
-                topic,
-                quiz_type,
-                publish,
-                description,
-                lo1,
-                lo2,
-                lo3,
-                lo1_media,
-                lo2_media,
-                lo3_media,
-                lo1_description,
-                lo2_description,
-                lo3_description,
-              } = req.body;
               await supabase
                 .from('lessons')
-                .update({
-                  title: title,
-                  educational_level: educational_level,
-                  subject: subject,
-                  topic: topic,
-                  quiz_type: quiz_type,
-                  publish: publish,
-                  lo1: lo1,
-                  lo2: lo2,
-                  lo3: lo3,
-                  lo1_media: lo1_media,
-                  lo2_media: lo2_media,
-                  lo3_media: lo3_media,
-                  lo1_description: lo1_description,
-                  lo2_description: lo2_description,
-                  lo3_description: lo3_description,
-                })
+                .update(HandleResponse.insertLesson(req.body))
                 .eq('lessons_id', req.params.id)
                 .then((response) => {
                   if (response?.error) {
