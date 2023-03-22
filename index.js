@@ -1,6 +1,5 @@
 require('dotenv').config();
 const express = require('express');
-const bodyParser = require('body-parser');
 const superAdminSignUp = require('./routes/superAdminSignUp');
 const superAdminLogin = require('./routes/superAdminLogin');
 const adminSignUp = require('./routes/adminSignUp');
@@ -11,8 +10,7 @@ const waitList = require('./routes/waitList');
 
 const app = express();
 app.use(express.json());
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(bodyParser.json());
+
 //routes
 app.use('/api/super-admin-sign-up', superAdminSignUp);
 app.use('/api/super-admin-login', superAdminLogin);

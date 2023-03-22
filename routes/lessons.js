@@ -4,14 +4,15 @@ const {
   updateLesson,
   deleteLesson,
 } = require('../controllers/lessons/lessonsController');
-const bodyParser = require('body-parser');
-const multer = require('multer');
 const express = require('express');
-const app = express();
 const router = express.Router();
-const upload = multer();
+const formidableMiddleware = require('express-formidable');
 
-app.use(bodyParser.urlencoded({ extended: true }));
+/***************************** For Form Data ******************************/
+router.use(formidableMiddleware({
+  encoding: 'utf-8',
+  multiples: true, // req.files to be arrays of files
+}));
 
 /***************************** Get All Lesson ******************************/
 
@@ -19,11 +20,11 @@ router.get('/', getAllLessons);
 
 /***************************** Create Lesson ******************************/
 
-router.post('/', upload.none(), createLesson);
+router.post('/', createLesson);
 
 /***************************** Update Single Lesson ******************************/
 
-router.put('/:id', upload.none(), updateLesson);
+router.put('/:id', updateLesson);
 
 /***************************** Update Single Lesson ******************************/
 
