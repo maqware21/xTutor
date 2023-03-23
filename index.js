@@ -1,4 +1,5 @@
 require('dotenv').config();
+const cors = require("cors");
 const express = require('express');
 const superAdminSignUp = require('./routes/superAdminSignUp');
 const superAdminLogin = require('./routes/superAdminLogin');
@@ -9,6 +10,7 @@ const lessons = require('./routes/lessons');
 const waitList = require('./routes/waitList');
 
 const app = express();
+app.use(cors());
 app.use(express.json());
 
 //routes
