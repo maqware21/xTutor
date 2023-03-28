@@ -46,15 +46,27 @@ const addNewQuiz = async (req, resp) => {
       if (response?.data?.user === null) {
         resp.status(401).send({ message: 'Unauthorized' });
       } else {
+        const { email, role } = response?.data?.user;
         await supabase
-          .from('quiz')
-          .insert(HandleResponse.createQuiz(req.body))
-          .then((res) => {
-            const { data, statusText } = res;
-            if (data === null && statusText === null) {
-              resp.status(400).send({ message: error?.message });
+          .from('users')
+          .select('*')
+          .eq('email', email)
+          .then(async (res) => {
+            const { data } = res;
+            if (data[0].role !== 1) {
+              await supabase
+                .from('quiz')
+                .insert(HandleResponse.createQuiz(req.body))
+                .then((respo) => {
+                  const { data, statusText, error } = respo;
+                  if (data === null && statusText === null) {
+                    resp.status(400).send({ message: error?.message });
+                  } else {
+                    resp.send({ message: 'Quiz successfully created' });
+                  }
+                });
             } else {
-              resp.send({ message: 'Quiz successfully created' });
+              resp.send({ message: 'Unauthorized' });
             }
           });
       }
@@ -76,15 +88,27 @@ const updateQuiz = async (req, resp) => {
       if (response?.data?.user === null) {
         resp.status(401).send({ message: 'Unauthorized' });
       } else {
+        const { email } = response?.data?.user;
         await supabase
-          .from('quiz')
-          .update(HandleResponse.createQuiz(req.body))
-          .eq('quiz_uuid', req.params.id)
-          .then((res) => {
-            if (res?.error) {
-              resp.status(401).send({ message: res?.error?.message });
+          .from('users')
+          .select('*')
+          .eq('email', email)
+          .then(async (resp1) => {
+            const { data } = resp1;
+            if (data[0].role !== 1) {
+              await supabase
+                .from('quiz')
+                .update(HandleResponse.createQuiz(req.body))
+                .eq('quiz_uuid', req.params.id)
+                .then((resp2) => {
+                  if (resp2?.error) {
+                    resp.status(401).send({ message: resp2?.error?.message });
+                  } else {
+                    resp.send({ message: 'Lesson successfully updated.' });
+                  }
+                });
             } else {
-              resp.send({ message: 'Lesson successfully updated.' });
+              resp.send({ message: 'Unauthorized' });
             }
           });
       }
@@ -102,14 +126,14 @@ const deleteQuiz = async (req, resp) => {
       if (response?.data?.user === null) {
         resp.status(401).send({ message: 'Unauthorized' });
       } else {
-        const { email, role } = response?.data?.user;
+        const { email } = response?.data?.user;
         await supabase
-          .from('superAdmin')
+          .from('users')
           .select('*')
           .eq('email', email)
-          .then(async (res) => {
-            const { data, error, statusText } = res;
-            if (data && statusText === 'OK') {
+          .then(async (resp1) => {
+            const { data } = resp1;
+            if (data[0].role !== 1) {
               await supabase
                 .from('quiz')
                 .delete()
@@ -123,6 +147,8 @@ const deleteQuiz = async (req, resp) => {
                     resp.send({ message: 'Quiz successfully deleted.' });
                   }
                 });
+            } else {
+              resp.send({ message: 'Unauthorized' });
             }
           });
       }

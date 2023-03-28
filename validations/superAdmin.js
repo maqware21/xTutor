@@ -4,7 +4,6 @@ function validateSASignUp(admin) {
   const schema = Joi.object({
     first_name: Joi.string().required(),
     last_name: Joi.string().required(),
-    role: Joi.string().required(),
     email: Joi.string()
       .required()
       .email({

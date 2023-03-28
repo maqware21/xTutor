@@ -53,12 +53,12 @@ const createLesson = async (req, resp) => {
       } else {
         const { email, role } = response?.data?.user;
         await supabase
-          .from('superAdmin')
+          .from('users')
           .select('*')
           .eq('email', email)
           .then(async (res) => {
-            const { data, error, statusText } = res;
-            if (data && statusText === 'OK') {
+            const { data } = res;
+            if (data[0]?.role === 4) {
               const {
                 title,
                 educational_level,
@@ -155,6 +155,8 @@ const createLesson = async (req, resp) => {
                     resp.send({ message: 'Lesson successfully created' });
                   }
                 });
+            } else {
+              resp.status(401).send({ message: 'Unauthorized' });
             }
           });
       }
@@ -180,12 +182,12 @@ const updateLesson = async (req, resp) => {
       } else {
         const { email, role } = response?.data?.user;
         await supabase
-          .from('superAdmin')
+          .from('users')
           .select('*')
           .eq('email', email)
           .then(async (res) => {
             const { data, error, statusText } = res;
-            if (data && statusText === 'OK') {
+            if (data[0].role === 4) {
               const {
                 title,
                 educational_level,
@@ -284,6 +286,8 @@ const updateLesson = async (req, resp) => {
                     resp.send({ message: 'Lesson successfully updated.' });
                   }
                 });
+            } else {
+              resp.status(401).send({ message: 'Unauthorized' });
             }
           });
       }
@@ -303,14 +307,16 @@ const deleteLesson = async (req, resp) => {
       if (response?.data?.user === null) {
         resp.status(401).send({ message: 'Unauthorized' });
       } else {
+        console.log('response', response);
         const { email, role } = response?.data?.user;
         await supabase
-          .from('superAdmin')
+          .from('users')
           .select('*')
           .eq('email', email)
           .then(async (res) => {
-            const { data, error, statusText } = res;
-            if (data && statusText === 'OK') {
+            console.log('res', res);
+            const { data } = res;
+            if (data[0]?.role === 4) {
               await supabase
                 .from('lessons')
                 .delete()
@@ -324,6 +330,8 @@ const deleteLesson = async (req, resp) => {
                     resp.send({ message: 'Lesson successfully deleted.' });
                   }
                 });
+            } else {
+              resp.status(401).send({ message: 'Unauthorized' });
             }
           });
       }

@@ -16,7 +16,7 @@ const registerSuperAdmin = async (req, resp) => {
   const { email } = req.body;
 
   await supabase
-    .from('superAdmin')
+    .from('users')
     .select('email')
     .eq('email', email)
     .then(async (res) => {
@@ -27,10 +27,9 @@ const registerSuperAdmin = async (req, resp) => {
           const { data, error } = await supabase.auth.signUp(
             HandleResponse.handleRegisterSuperAdmin(req.body)
           );
-
           if (data) {
             const { error } = await supabase
-              .from('superAdmin')
+              .from('users')
               .insert(HandleResponse.createSuperAdmin(req.body));
             if (error) {
               resp.status(400).send(error?.message);
@@ -60,7 +59,7 @@ const loginSuperAdmin = async (req, resp) => {
       } else {
         const email = response?.data?.user?.email;
         supabase
-          .from('superAdmin')
+          .from('users')
           .select('*')
           .eq('email', email)
           .then((res) => {
