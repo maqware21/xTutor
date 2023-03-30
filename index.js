@@ -15,6 +15,7 @@ app.use(cors());
 app.use(express.json());
 
 //routes
+
 app.use('/api/super-admin-sign-up', superAdminSignUp);
 app.use('/api/super-admin-login', superAdminLogin);
 app.use('/api/admin-sign-up', adminSignUp);
