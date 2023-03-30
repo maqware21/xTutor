@@ -7,12 +7,16 @@ const {
 const express = require('express');
 const router = express.Router();
 const formidableMiddleware = require('express-formidable');
+const multer = require('multer');
+const upload = multer();
 
 /***************************** For Form Data ******************************/
-router.use(formidableMiddleware({
-  encoding: 'utf-8',
-  multiples: true, // req.files to be arrays of files
-}));
+router.use(
+  formidableMiddleware({
+    encoding: 'utf-8',
+    multiples: true, // req.files to be arrays of files
+  })
+);
 
 /***************************** Get All Lesson ******************************/
 
